@@ -1,4 +1,7 @@
 @import "tailwindcss";
+@plugin "daisyui";
+@import "@heroui/styles";
+@import "react-marquee-text/dist/styles.css";
 
 :root {
   --background: #ffffff;
