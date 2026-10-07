@@ -2,8 +2,8 @@ import HomeNewsCard from "@/Components/HomeNewsCard";
 import OtherNewsSection from "@/Components/OtherNewsSection";
 
 type NewsArticle = {
-  id?: string | number;
-  title?: string;
+  id: string | number;
+  title: string;
   [key: string]: unknown;
 };
 
@@ -36,10 +36,10 @@ export default async function Page() {
       })
     ).values()
   );
-
+  console.log(sections);
   const excludedTitles = [
     "প্রধান খবর",
-    "বিবিসি বাংলা এখন হোয়াটসঅ্যাপে!",
+    "বিবিসি বাংলা এখন হোয়াটসঅ্যাপে!",
     "বিবিসি বাংলা এখন ইন্সটাগ্রামে!",
     "সামাজিক মাধ্যমে বিবিসি বাংলা",
   ];
@@ -55,7 +55,7 @@ export default async function Page() {
         <OtherNewsSection
           key={String(item.id ?? item.title ?? index)}
           title={item.title ?? ""}
-          articles={(item.articles ?? []) as any}
+          articles={item.articles ?? []}
         />
       ))}
     </main>
