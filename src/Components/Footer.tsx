@@ -1,13 +1,28 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import logo from '@/assets/logo.webp'
+import toast from 'react-hot-toast';
+import logo from '@/assets/logo.webp';
 
 const Footer = () => {
+    const [email, setEmail] = useState('');
+
     const scrollToTop = () => {
         window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+
+    const handleSubscribe = (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+
+        if (!email.trim()) {
+            toast.error('অনুগ্রহ করে একটি সঠিক ইমেইল অ্যাড্রেস দিন!');
+            return;
+        }
+
+        toast.success('নিউজলেটারে সফলভাবে সাবস্ক্রাইব করা হয়েছে!');
+        setEmail('');
     };
 
     return (
@@ -165,11 +180,13 @@ const Footer = () => {
                             নিউজলেটার
                         </h3>
                         <p className="text-xs text-slate-400 mb-3 leading-relaxed">
-                            দৈনিক গুরুত্বপূর্ণ সংবাদের আপডেট পেতে আপনার ইমেইল দিয়ে সাবস্ক্রাইব করুন।
+                            দৈনিক গুরুত্বপূর্ণ সংবাদের আপডেট পেতে আপনার ইমেইল দিয়ে সাবস্ক্রাইব করুন।
                         </p>
-                        <form onSubmit={(e) => e.preventDefault()} className="space-y-2">
+                        <form onSubmit={handleSubscribe} className="space-y-2">
                             <input
                                 type="email"
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
                                 placeholder="আপনার ইমেইল..."
                                 className="w-full rounded-lg bg-slate-800 border border-slate-700 px-3 py-2 text-xs text-white placeholder-slate-500 focus:border-red-500 focus:outline-none focus:ring-1 focus:ring-red-500 transition-all"
                                 required
