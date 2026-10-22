@@ -1,57 +1,85 @@
-import DetailNewsCard, { DetailNewsData } from '@/Components/DetailNewsCard';
+import type { Metadata } from "next";
+import { notFound } from "next/navigation";
+import ArticleView from "@/Components/ArticleView";
+import { getArticle, getRelated } from "@/lib/news-api";
+import { SITE_NAME, SITE_URL } from "@/lib/site";
 
-interface PageProps {
+interface NewsPageProps {
     params: Promise<{ id: string }>;
 }
 
-export default async function NewsDetailPage({ params }: PageProps) {
+export async function generateMetadata({ params }: NewsPageProps): Promise<Metadata> {
     const { id } = await params;
+    const article = await getArticle(id);
 
-    let newsData: DetailNewsData | null = null;
-    let apiError: string | null = null;
+    if (!article) notFound();
 
-    // Try Endpoint 1: /api/article/${id}
-    try {
-        let res = await fetch(`https://news-api-v2.vercel.app/api/article/${id}`, {
-            next: { revalidate: 0 },
-        });
+    return {
+        title: article.title,
+        description: article.description,
+        alternates: { canonical: `/news/${article.id}` },
+        openGraph: {
+            type: "article",
+            title: article.title,
+            description: article.description,
+            publishedTime: article.publishedAt,
+            modifiedTime: article.lastPublished || article.publishedAt,
+            authors: article.byline.map((author) => author.name),
+            section: article.category,
+            images: article.imageUrl ? [{ url: article.imageUrl, alt: article.imageAlt }] : undefined,
+        },
+        twitter: {
+            card: "summary_large_image",
+            title: article.title,
+            description: article.description,
+            images: article.imageUrl ? [article.imageUrl] : undefined,
+        },
+    };
+}
 
-        // Fallback to Endpoint 2 if Endpoint 1 fails: /api/news/${id}
-        if (!res.ok) {
-            res = await fetch(`https://news-api-v2.vercel.app/api/news/${id}`, {
-                next: { revalidate: 0 },
-            });
-        }
+export default async function NewsDetailPage({ params }: NewsPageProps) {
+    const { id } = await params;
+    const article = await getArticle(id);
 
-        if (!res.ok) {
-            apiError = `API returned HTTP status ${res.status} for ID: ${id}`;
-        } else {
-            const json = await res.json();
-            newsData = json?.data || json || null;
-            if (!newsData) {
-                apiError = `API returned 200 OK but data payload was empty for ID: ${id}`;
-            }
-        }
-    } catch (err: unknown) {
-        apiError = `Fetch Error: ${err instanceof Error ? err.message : 'Failed to connect to API'}`;
-    }
+    if (!article) notFound();
 
-    // Display debugging feedback instead of silently triggering 404
-    if (apiError || !newsData) {
-        return (
-            <div className="mx-auto max-w-xl my-12 p-6 bg-red-50 border border-red-200 rounded-xl text-center">
-                <h2 className="text-lg font-bold text-red-700 mb-2">API Error / Data Not Found</h2>
-                <p className="text-sm text-red-600 mb-4">{apiError}</p>
-                <div className="text-xs text-slate-500 bg-white p-3 rounded border border-slate-200 text-left font-mono">
-                    Article ID Requested: {id}
-                </div>
-            </div>
-        );
-    }
+    const related = await getRelated(article, 3);
+
+    const jsonLd = {
+        "@context": "https://schema.org",
+        "@type": "NewsArticle",
+        headline: article.title,
+        description: article.description,
+        image: article.imageUrl ? [article.imageUrl] : undefined,
+        datePublished: article.publishedAt,
+        dateModified: article.lastPublished || article.publishedAt,
+        author: article.byline.map((author) => ({
+            "@type": "Person",
+            name: author.name,
+        })),
+        publisher: {
+            "@type": "Organization",
+            name: SITE_NAME,
+            logo: {
+                "@type": "ImageObject",
+                url: `${SITE_URL}/logo.webp`,
+            },
+        },
+        mainEntityOfPage: {
+            "@type": "WebPage",
+            "@id": `${SITE_URL}/news/${article.id}`,
+        },
+        articleSection: article.category,
+        keywords: article.tags.join(", "),
+    };
 
     return (
-        <main className="min-h-screen bg-slate-50/50 py-4 sm:py-8">
-            <DetailNewsCard detailNews={newsData} />
-        </main>
+        <>
+            <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+            />
+            <ArticleView article={article} related={related} />
+        </>
     );
 }

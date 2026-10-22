@@ -1,97 +1,81 @@
-'use client';
+import Link from "next/link";
+import Container from "@/Components/ui/Container";
+import BackButton from "@/Components/ui/BackButton";
+import { getCategories } from "@/lib/news-api";
 
-import React from 'react';
-import Link from 'next/link';
+export default async function NotFound() {
+    const categories = (await getCategories()).slice(0, 6);
 
-const NotFoundPages = () => {
     return (
-        <div className="min-h-[calc(100vh-120px)] flex items-center justify-center bg-slate-50/60 px-4 py-16 sm:px-6 lg:px-8 relative overflow-hidden">
+        <Container size="narrow" className="py-14 sm:py-20">
+            <div className="relative overflow-hidden rounded-3xl border border-line bg-surface px-6 py-12 text-center shadow-card sm:px-12">
+                <div
+                    className="pointer-events-none absolute -top-20 left-1/2 h-56 w-56 -translate-x-1/2 rounded-full bg-brand-600/10 blur-3xl"
+                    aria-hidden
+                />
 
-            {/* Ambient Background Glows */}
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 -z-10 w-96 h-96 rounded-full bg-red-500/10 blur-3xl pointer-events-none" />
-            <div className="absolute top-1/3 left-1/4 -z-10 w-64 h-64 rounded-full bg-slate-200/50 blur-2xl pointer-events-none" />
+                <p className="relative font-serif text-7xl font-bold text-brand-600 sm:text-8xl">
+                    ৪০৪
+                </p>
+                <h1 className="relative mt-3 text-2xl font-bold text-ink sm:text-3xl">
+                    পৃষ্ঠাটি পাওয়া যায়নি
+                </h1>
+                <p className="relative mx-auto mt-3 max-w-md text-sm leading-relaxed text-muted">
+                    আপনি যে পৃষ্ঠাটি খুঁজছেন সেটি সরানো হয়েছে, নাম পরিবর্তন হয়েছে অথবা
+                    লিঙ্কটি ভুল।
+                </p>
 
-            <div className="w-full max-w-xl text-center space-y-8 rounded-3xl bg-white p-8 sm:p-12 shadow-2xl shadow-slate-200/60 border border-slate-100 relative z-10 backdrop-blur-sm">
-
-                {/* 404 Stylized Badge */}
-                <div className="relative inline-flex items-center justify-center">
-                    <span className="text-7xl sm:text-9xl font-black text-transparent bg-clip-text bg-gradient-to-r from-red-600 via-rose-600 to-red-700 tracking-tight select-none">
-                        404
-                    </span>
-                    <div className="absolute -top-2 -right-3 sm:-top-3 sm:-right-4 bg-red-100 border border-red-200 text-red-600 text-[10px] sm:text-xs font-bold px-2.5 py-0.5 rounded-full shadow-xs">
-                        Page Not Found
-                    </div>
-                </div>
-
-                {/* Text Content */}
-                <div className="space-y-3">
-                    <h1 className="text-xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
-                        পৃষ্ঠাটি পাওয়া যায়নি!
-                    </h1>
-                    <p className="text-xs sm:text-sm text-slate-500 max-w-md mx-auto leading-relaxed">
-                        আপনি যে পৃষ্ঠাটি খুঁজছেন সেটি মুছে ফেলা হয়েছে, নাম পরিবর্তন করা হয়েছে অথবা লিংকটি সাময়িকভাবে অনুপলব্ধ।
-                    </p>
-                </div>
-
-                {/* Action Buttons */}
-                <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
+                <div className="relative mt-7 flex flex-col justify-center gap-3 sm:flex-row">
                     <Link
                         href="/"
-                        className="w-full sm:w-auto flex items-center justify-center gap-2 rounded-xl bg-red-600 px-6 py-3 text-xs sm:text-sm font-bold text-white shadow-md shadow-red-600/20 hover:bg-red-700 hover:shadow-lg transition-all active:scale-[0.98]"
+                        className="inline-flex items-center justify-center gap-2 rounded-xl bg-brand-600 px-6 py-3 text-sm font-bold text-white transition-colors hover:bg-brand-700"
                     >
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                        <svg
+                            className="h-4 w-4"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth={2}
+                            aria-hidden
+                        >
+                            <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
+                            />
                         </svg>
-                        <span>হোমপেজে যান</span>
+                        হোমপেজে যান
                     </Link>
-
-                    <button
-                        onClick={() => window.history.back()}
-                        className="w-full sm:w-auto flex items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-6 py-3 text-xs sm:text-sm font-bold text-slate-700 shadow-2xs hover:bg-slate-50 hover:border-slate-300 transition-all active:scale-[0.98] cursor-pointer"
-                    >
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-                        </svg>
-                        <span>পূর্ববর্তী পৃষ্ঠা</span>
-                    </button>
+                    <BackButton />
                 </div>
 
-                {/* Quick Navigation Suggestions */}
-                <div className="pt-6 border-t border-slate-100">
-                    <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-3">
-                        জনপ্রিয় বিভাগসমূহ
+                <form action="/search" method="get" role="search" className="relative mx-auto mt-8 max-w-md">
+                    <input
+                        type="search"
+                        name="q"
+                        placeholder="সংবাদ খুঁজুন..."
+                        aria-label="সংবাদ খুঁজুন"
+                        className="w-full rounded-xl border border-line bg-paper/60 py-3 pr-4 pl-4 text-sm text-ink placeholder:text-muted/70 focus:border-brand-300 focus:bg-surface focus:outline-none"
+                    />
+                </form>
+
+                <div className="relative mt-9 border-t border-line pt-6">
+                    <p className="text-[11px] font-bold tracking-[0.16em] text-muted uppercase">
+                        জনপ্রিয় বিভাগ
                     </p>
-                    <div className="flex flex-wrap items-center justify-center gap-2 text-xs font-semibold">
-                        <Link
-                            href="/category/জাতীয়"
-                            className="px-3 py-1.5 rounded-lg bg-slate-100 text-slate-600 hover:bg-red-50 hover:text-red-600 transition-colors"
-                        >
-                            জাতীয়
-                        </Link>
-                        <Link
-                            href="/category/রাজনীতি"
-                            className="px-3 py-1.5 rounded-lg bg-slate-100 text-slate-600 hover:bg-red-50 hover:text-red-600 transition-colors"
-                        >
-                            রাজনীতি
-                        </Link>
-                        <Link
-                            href="/category/খেলাধুলা"
-                            className="px-3 py-1.5 rounded-lg bg-slate-100 text-slate-600 hover:bg-red-50 hover:text-red-600 transition-colors"
-                        >
-                            খেলাধুলা
-                        </Link>
-                        <Link
-                            href="/category/বিনোদন"
-                            className="px-3 py-1.5 rounded-lg bg-slate-100 text-slate-600 hover:bg-red-50 hover:text-red-600 transition-colors"
-                        >
-                            বিনোদন
-                        </Link>
+                    <div className="mt-3 flex flex-wrap justify-center gap-2">
+                        {categories.map((category) => (
+                            <Link
+                                key={category.slug}
+                                href={`/category/${category.slug}`}
+                                className="rounded-full border border-line bg-paper/60 px-3.5 py-1.5 text-xs font-semibold text-ink-soft transition-colors hover:border-brand-200 hover:bg-brand-50 hover:text-brand-700"
+                            >
+                                {category.title}
+                            </Link>
+                        ))}
                     </div>
                 </div>
-
             </div>
-        </div>
+        </Container>
     );
-};
-
-export default NotFoundPages;
+}
